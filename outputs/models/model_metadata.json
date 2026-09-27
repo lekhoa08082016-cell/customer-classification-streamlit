@@ -1,0 +1,37 @@
+{
+  "best_model_name": "Gradient Boosting",
+  "numeric_features": [
+    "age",
+    "duration",
+    "campaign",
+    "pdays",
+    "previous",
+    "emp.var.rate",
+    "cons.price.idx",
+    "cons.conf.idx",
+    "euribor3m",
+    "nr.employed",
+    "has_previous_contact"
+  ],
+  "categorical_features": [
+    "job",
+    "marital",
+    "education",
+    "default",
+    "housing",
+    "loan",
+    "contact",
+    "month",
+    "day_of_week",
+    "poutcome",
+    "campaign_intensity",
+    "age_group"
+  ],
+  "metrics": {
+    "Accuracy": 0.9169,
+    "Precision": 0.6583,
+    "Recall": 0.5453,
+    "F1": 0.5965,
+    "ROC-AUC": 0.9472
+  }
+}

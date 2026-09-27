@@ -31,3 +31,6 @@ Thumbs.db
 # Model outputs
 outputs/models/*.pkl
 outputs/models/*.joblib
+!outputs/models/best_model.pkl
+!outputs/models/model_metadata.json
+!outputs/results/feature_importance.csv

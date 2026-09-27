@@ -1,168 +1,111 @@
-# Customer Classification – Bank Marketing Dataset
+# Đồ án Phân loại Khách hàng (Customer Classification)
 
-## 📋 Project Overview
+Đây là mã nguồn và tài liệu cho **Đề bài tập (Python – Classification)** - **Đề 1: Phân loại khách hàng (Customer Segmentation / Churn)**. 
+Mục tiêu của dự án là áp dụng các thuật toán classification phổ biến trên tập dữ liệu thực tế nhằm dự đoán hành vi khách hàng, từ đó rút ra các Insight kinh doanh (E-commerce / Marketing).
 
-This project implements a **supervised binary classification** model to predict whether a customer will respond positively to a direct marketing campaign (subscribing to a term deposit).
+## 📊 Dataset: Bank Marketing (UCI)
 
-**Dataset:** UCI Machine Learning Repository – [Bank Marketing Dataset](https://archive.ics.uci.edu/ml/datasets/bank+marketing)
+Tập dữ liệu được sử dụng là **Bank Marketing** từ [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/datasets/bank+marketing), với tính chất tương tự như bài toán dự đoán hành vi mua hàng trong E-commerce (khách hàng có đồng ý đăng ký dịch vụ/mua hàng hay không).
 
-**Business Context:** If a business has customer behavioral and demographic data, a predictive model can help identify customer segments with high conversion probability — enabling targeted advertising, voucher allocation, email marketing, and remarketing strategies.
+- **Số lượng records:** 41,188
+- **Số lượng features:** 20 (10 numerical + 10 categorical)
+- **Target:** `y` (yes/no — khách hàng có đăng ký sử dụng dịch vụ/mua hàng không).
 
 ---
 
-## 📁 Project Structure
+## 🎯 Hoàn thành các Yêu cầu của Đề bài
 
-```
+Dự án này đã thực hiện đầy đủ 6 yêu cầu từ đề bài:
+
+### 1️⃣ Yêu cầu 1: Load dữ liệu, làm sạch
+- Đọc dữ liệu từ file `.csv` và loại bỏ các dữ liệu trùng lặp (duplicates).
+- **Xử lý Missing values:** Thay thế các giá trị `"unknown"` bằng giá trị phổ biến nhất (Mode) thông qua `SimpleImputer`.
+- **Encoding & Scaling:** Sử dụng `OneHotEncoder` cho biến phân loại (categorical) và `StandardScaler` cho biến liên tục (numerical).
+- Tất cả được đóng gói gọn gàng bằng `ColumnTransformer` để tránh data leakage.
+
+### 2️⃣ Yêu cầu 2: Tạo target
+- Chuyển đổi cột mục tiêu `y` (yes/no) thành định dạng nhị phân `1` (có mua hàng/đăng ký) và `0` (không mua hàng/từ chối) để đưa vào mô hình học máy.
+
+### 3️⃣ Yêu cầu 3: Chia tập Train/Test & Cross Validation
+- Sử dụng `train_test_split` để chia tập dữ liệu theo tỷ lệ **70/30**.
+- Đảm bảo tỷ lệ phân phối nhãn (Class distribution) đồng đều bằng tham số `stratify=y`.
+- Áp dụng **StratifiedKFold (K=5)** trong quá trình Cross-validation để đánh giá mô hình khách quan nhất.
+
+### 4️⃣ Yêu cầu 4: Huấn luyện ít nhất 4 thuật toán
+Dự án đã sử dụng `Pipeline` để huấn luyện 4 thuật toán classification phổ biến:
+1. **Logistic Regression** (baseline có trọng số cân bằng)
+2. **Decision Tree**
+3. **Random Forest** (mô hình ensemble với 300 cây)
+4. **Gradient Boosting** (boosting tree method)
+
+### 5️⃣ Yêu cầu 5: Đánh giá mô hình
+Tất cả các mô hình được đánh giá toàn diện qua các chỉ số:
+- **Accuracy**, **Precision**, **Recall**, **F1-Score**, **ROC-AUC**.
+- Trực quan hóa bằng **Confusion Matrix** và đường cong **ROC Curve**.
+
+### 6️⃣ Yêu cầu 6: Phân tích Feature Importance & Insight E-commerce
+- Trích xuất mức độ quan trọng của các đặc trưng (Feature Importance) từ mô hình mạnh nhất (Random Forest / Gradient Boosting).
+- Viết báo cáo giải thích các yếu tố cốt lõi ảnh hưởng đến quyết định mua hàng (ví dụ: thời lượng tư vấn, tuổi tác, biến động kinh tế vĩ mô...).
+- *Chi tiết được trình bày trong file báo cáo (`report/report.md`).*
+
+---
+
+## 📁 Cấu trúc thư mục (Deliverables)
+
+```text
 customer_classification/
 │
-├── data/                          # Dataset files
-│   └── bank-additional-full.csv   # Main dataset (41,188 records)
+├── data/                          # Chứa file dữ liệu dataset
+│   └── bank-additional-full.csv   
 │
-├── notebooks/                     # Jupyter notebooks
-│   └── customer_classification.ipynb  # Complete analysis notebook
+├── notebooks/                     # Chứa Notebook theo yêu cầu
+│   └── customer_classification.ipynb  # File Notebook thực hiện toàn bộ YC 1->6
 │
-├── src/                           # Python source modules
-│   ├── data_preprocessing.py      # Data loading, cleaning, feature engineering
-│   ├── models.py                  # Model definitions and pipeline builders
-│   ├── evaluation.py              # Metrics, cross-validation, visualizations
-│   └── prediction.py              # Prediction functions for new customers
+├── report/                        # Báo cáo kết quả
+│   └── report.md                  # Báo cáo ngắn (1-2 trang) giải thích Insight E-commerce
 │
-├── outputs/                       # Generated outputs
-│   ├── figures/                   # EDA and evaluation charts
-│   ├── models/                    # Saved model files
-│   └── results/                   # CSV result tables
+├── outputs/                       # Thư mục chứa kết quả xuất ra
+│   ├── figures/                   # Biểu đồ đánh giá, Confusion Matrix, Feature Importance
+│   ├── models/                    # File mô hình đã được huấn luyện (.pkl)
+│   └── results/                   # Bảng kết quả metrics (.csv)
 │
-├── report/                        # Project report
-│   └── report.md                  # Analysis report (1-2 pages)
+├── src/                           # Source code (nếu cần xem chi tiết cách cấu trúc)
+│   ├── data_preprocessing.py      
+│   ├── models.py                  
+│   └── evaluation.py              
 │
-├── requirements.txt               # Python dependencies
-├── README.md                      # This file
-└── .gitignore                     # Git ignore rules
+├── app.py                         # Ứng dụng Web Streamlit để test model trực quan
+├── save_models.py                 # File python để lưu model
+├── requirements.txt               # Thư viện cần thiết
+└── README.md                      # File hướng dẫn (là file này)
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Hướng dẫn chạy dự án
 
-### Prerequisites
-
-- Python 3.9+ recommended
-- pip package manager
-
-### Installation
-
-1. Clone or download the project:
-```bash
-cd customer_classification
-```
-
-2. Install dependencies:
+### 1. Cài đặt thư viện
+Hãy chắc chắn rằng máy bạn đã cài đặt Python 3.9 trở lên. Cài đặt các thư viện cần thiết bằng lệnh:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. (Optional) Dataset is pre-downloaded in `data/`. If missing, the notebook includes instructions to download from UCI.
-
-### Run the Notebook
-
-**Option 1 – VS Code:**
-- Open `notebooks/customer_classification.ipynb` in VS Code
-- Select a Python kernel
-- Run All Cells
-
-**Option 2 – Jupyter:**
+### 2. Chạy Notebook (Đề bài yêu cầu)
+Bạn có thể mở và chạy toàn bộ mã nguồn trong file `notebooks/customer_classification.ipynb` bằng VS Code hoặc Jupyter Notebook:
 ```bash
 cd notebooks
 jupyter notebook customer_classification.ipynb
 ```
 
-### Run the Streamlit App (Demo UI)
-
-To launch the interactive web interface:
+### 3. Xem Demo Giao diện Web (Mở rộng thêm)
+Để thấy mô hình hoạt động trên giao diện thực tế (cực kỳ trực quan cho Marketing), hãy chạy Streamlit:
 ```bash
 streamlit run app.py
 ```
-Then open your browser to the URL provided (usually `http://localhost:8501`).
+Sau đó truy cập đường link trình duyệt hiện ra (thường là `http://localhost:8501`).
 
 ---
 
-## 📊 Dataset
-
-**Source:** UCI Machine Learning Repository – Bank Marketing Dataset
-
-- **Records:** 41,188
-- **Features:** 20 (10 numerical + 10 categorical)
-- **Target:** `y` (yes/no — whether the client subscribed to a term deposit)
-- **Separator:** semicolon (`;`)
-
-**Features include:**
-- Client demographics: `age`, `job`, `marital`, `education`
-- Campaign info: `contact`, `month`, `day_of_week`, `duration`, `campaign`
-- Previous campaign: `pdays`, `previous`, `poutcome`
-- Economic indicators: `emp.var.rate`, `cons.price.idx`, `cons.conf.idx`, `euribor3m`, `nr.employed`
-
----
-
-## 🔬 Methodology
-
-1. **Data Cleaning:** Handle `"unknown"` values, remove duplicates
-2. **EDA:** Target distribution, conversion rates, correlation analysis
-3. **Feature Engineering:** `has_previous_contact`, `campaign_intensity`, `age_group`
-4. **Preprocessing:** `ColumnTransformer` + `Pipeline` (no data leakage)
-5. **Models:** Logistic Regression, Decision Tree, Random Forest, Gradient Boosting
-6. **Evaluation:** Stratified 5-Fold CV + held-out test set
-7. **Metrics:** Accuracy, Precision, Recall, F1, ROC-AUC
-
----
-
-## 📈 Models Compared
-
-| Model | Description |
-|-------|-------------|
-| Logistic Regression | Linear baseline with balanced class weights |
-| Decision Tree | Interpretable tree model |
-| Random Forest | Ensemble of 300 decision trees |
-| Gradient Boosting | Sequential boosting approach |
-
----
-
-## 🔑 Key Features
-
-- ✅ Complete end-to-end ML pipeline
-- ✅ No data leakage (Pipeline + ColumnTransformer)
-- ✅ Stratified split and cross-validation
-- ✅ Multiple evaluation metrics (not just accuracy)
-- ✅ Feature importance analysis
-- ✅ Business insight interpretation
-- ✅ Prediction function for new customers
-- ✅ Business scenario simulation
-
----
-
-## 🔄 Reproducibility
-
-All random operations use:
-```python
-random_state = 42
-```
-
----
-
-## ⚠️ Limitations
-
-- Dataset represents Portuguese banking, not all e-commerce contexts
-- `duration` feature is only known post-contact (not usable for pre-targeting)
-- Feature importance ≠ causal relationship
-- Model needs periodic retraining as customer behavior changes
-- Performance should be validated on real business data before deployment
-
----
-
-## 📝 License
-
-This project is for educational purposes. Dataset is provided by UCI Machine Learning Repository under their terms.
-
-## 📚 References
-
-- [Moro et al., 2014] S. Moro, P. Cortez and P. Rita. A Data-Driven Approach to Predict the Success of Bank Telemarketing. Decision Support Systems, Elsevier, 62:22-31, June 2014.
-- UCI Machine Learning Repository: https://archive.ics.uci.edu/ml/datasets/bank+marketing
+## 📝 License & References
+- Bộ dữ liệu được cấp bởi **UCI Machine Learning Repository**.
+- Phục vụ hoàn toàn cho mục đích học tập và nộp bài môn Học Máy.

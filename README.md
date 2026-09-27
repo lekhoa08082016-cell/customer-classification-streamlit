@@ -1,4 +1,4 @@
-# Đồ án Phân loại Khách hàng (Customer Classification)
+# Phân loại Khách hàng (Customer Classification)
 
 Đây là mã nguồn và tài liệu cho **Đề bài tập (Python – Classification)** - **Đề 1: Phân loại khách hàng (Customer Segmentation / Churn)**. 
 Mục tiêu của dự án là áp dụng các thuật toán classification phổ biến trên tập dữ liệu thực tế nhằm dự đoán hành vi khách hàng, từ đó rút ra các Insight kinh doanh (E-commerce / Marketing).
